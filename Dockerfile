@@ -1,4 +1,4 @@
-FROM amd64/ubuntu:18.04
+FROM amd64/ubuntu:20.04
 ARG GIT_COMMIT=master
 ARG GH_PR
 ARG GH_SLUG=pocl/pocl
@@ -17,4 +17,7 @@ RUN cd /home ; git clone https://github.com/$GH_SLUG.git ; cd /home/pocl ; git c
 RUN cd /home/pocl ; test -z "$GH_PR" || (git fetch origin +refs/pull/$GH_PR/merge && git checkout -qf FETCH_HEAD) && :
 RUN cd /home/pocl ; mkdir b ; cd b; cmake -G Ninja -DWITH_LLVM_CONFIG=/usr/bin/llvm-config-${LLVM_VERSION} -DCMAKE_INSTALL_PREFIX=/usr ..
 RUN cd /home/pocl/b ; ninja install
-CMD cd /home/pocl/b ; clinfo ; ctest -j4 --output-on-failure -L internal
+RUN apt install -y python3-pip
+RUN pip3 install pyopencl[pocl]
+ENV PYOPENCL_CTX='0'
+WORKDIR /app
