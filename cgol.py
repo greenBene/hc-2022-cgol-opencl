@@ -72,10 +72,10 @@ except Exception:
     raise
 
 
-for i in range(5):
+for i in range(10):
     prg.demo(queue, (len(cells),), None, cells_buffer, cells_buffer_out, np.int32(len(cells)))
-    cl.enqueue_copy(queue, cells_buffer, cells_buffer_out).wait()
-    cl.enqueue_copy(queue, cells, cells_buffer_out).wait()
+    cells_buffer_out, cells_buffer = cells_buffer, cells_buffer_out
+    cl.enqueue_copy(queue, cells, cells_buffer).wait()
     print(f"\nGeneration {i}")
     for res in cells:
         print(res)
