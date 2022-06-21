@@ -86,7 +86,7 @@ except Exception:
     raise
 
 
-for i in range(10_000):
+for i in range(5_000):
     prg.cgol(queue, (len(cells),len(cells)), None, cells_buffer, cells_buffer_out, np.int32(len(cells)))
     cells_buffer_out, cells_buffer = cells_buffer, cells_buffer_out
 cl.enqueue_copy(queue, cells, cells_buffer).wait()
