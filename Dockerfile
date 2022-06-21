@@ -21,3 +21,4 @@ RUN apt install -y python3-pip
 RUN pip3 install pyopencl[pocl]
 ENV PYOPENCL_CTX='0'
 WORKDIR /app
+CMD ["python3", "./cgol.py"]

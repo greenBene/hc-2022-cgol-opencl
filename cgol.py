@@ -1,6 +1,3 @@
-# IDEA
-# Generate function that executes cgol exacly once for given 2D array
-
 # Import required libraries 
 import pyopencl as cl
 import numpy as np
@@ -11,9 +8,9 @@ cells = np.array(
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+        [0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -56,9 +53,9 @@ __kernel void demo(__global uint *cells_in, __global uint *cells_out, int size){
         //Any live cell with fewer than two live neighbours dies, as if by underpopulation.
         if(isAlive > 0 && neighbours < 2) isAlive = 0;
         //Any live cell with two or three live neighbours lives on to the next generation.
-        else if(isAlive > 0 && neighbours < 4) isAlive = isAlive;
+        else if(isAlive > 0 && neighbours < 4) isAlive = 1;
         //Any live cell with more than three live neighbours dies, as if by overpopulation.
-        else if(isAlive > 1 && neighbours > 4) isAlive = 0;
+        else if(isAlive > 0 && neighbours > 3) isAlive = 0;
         //Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
         else if(isAlive == 0 && neighbours == 3)isAlive = 1;
 
@@ -74,8 +71,11 @@ except Exception:
     print(prg.get_build_info(ctx.devices[0], cl.program_build_info.LOG))
     raise
 
-prg.demo(queue, (len(cells),), None, cells_buffer, cells_buffer_out, np.int32(len(cells)))
-cl.enqueue_copy(queue, cells, cells_buffer_out).wait()
 
-for res in cells:
-    print(res)
+for i in range(5):
+    prg.demo(queue, (len(cells),), None, cells_buffer, cells_buffer_out, np.int32(len(cells)))
+    cl.enqueue_copy(queue, cells_buffer, cells_buffer_out).wait()
+    cl.enqueue_copy(queue, cells, cells_buffer_out).wait()
+    print(f"\nGeneration {i}")
+    for res in cells:
+        print(res)
