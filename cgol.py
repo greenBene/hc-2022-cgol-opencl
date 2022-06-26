@@ -82,6 +82,17 @@ class CGOL():
         cl.enqueue_copy(self.queue, self.cells, self.cells_buffer).wait()
         return self.cells
 
+    def print_current_generation(self):
+        cells = self.get_cells()
+        s = ""
+        for row in cells:
+            for element in row:
+                s+= f"\033[93mX \033[0m" if element == 1 else "\033[92mX \033[0m"
+            s+='\n'
+        print(s)
+
+
+
 
 if __name__ == '__main__':
     cgol = CGOL(40)
@@ -89,14 +100,5 @@ if __name__ == '__main__':
     i = 0
     while(True):
         cgol.calculate_next_generation()
-        cells = cgol.get_cells()
-
-        i = i + 1
-        print(f"{i}-th Generation")
-        s = ""
-        for row in cells:
-            for element in row:
-                s+= f"\033[93mX \033[0m" if element == 1 else "\033[92mX \033[0m"
-            s+='\n'
-        print(s)
+        cgol.print_current_generation()
         input("Press Enter to continue...")
