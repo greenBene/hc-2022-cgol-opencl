@@ -97,7 +97,6 @@ class CGOL():
 if __name__ == '__main__':
     cgol = CGOL(40)
 
-    i = 0
     while(True):
         cgol.calculate_next_generation()
         cgol.print_current_generation()
