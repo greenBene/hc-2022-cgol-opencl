@@ -29,16 +29,12 @@ class CGOL():
 
             //Any live cell with fewer than two live neighbours dies, as if by underpopulation.
             if(isAlive > 0 && neighbours < 2) isAlive = 0;
-
             //Any live cell with two or three live neighbours lives on to the next generation.
             else if(isAlive > 0 && neighbours < 4) isAlive = 1;
-
             //Any live cell with more than three live neighbours dies, as if by overpopulation.
             else if(isAlive > 0 && neighbours > 3) isAlive = 0;
-
             //Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
             else if(isAlive == 0 && neighbours == 3)isAlive = 1;
-
             cells_out[x*size+y] = (int) isAlive;
         }
         """
@@ -82,13 +78,13 @@ class CGOL():
         s = ""
         for row in cells:
             for element in row:
-                s+= f"\033[93mX \033[0m" if element == 1 else "\033[92mX \033[0m"
+                s+= f"\033[91mX \033[0m" if element == 1 else "\033[92mX \033[0m"
             s+='\n'
         print(s)
 
 
 if __name__ == '__main__':
-    cgol = CGOL(size=40)
+    cgol = CGOL(size=10)
 
     while(True):
         cgol.calculate_next_generation()
