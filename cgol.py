@@ -51,25 +51,24 @@ class CGOL():
         self.cells = np.random.randint(low=2, size=(size,size), dtype=np.int32)
         self.size = size
         # Prep OpelCL
-        self.ctx = cl.create_some_context()
-        self.queue = cl.CommandQueue(self.ctx)
+        self.context = cl.create_some_context()
+        self.queue = cl.CommandQueue(self.context)
 
-        mf = cl.mem_flags
-        self.cells_buffer = cl.Buffer(self.ctx, mf.READ_WRITE, self.cells.nbytes)
-        self.cells_buffer_out = cl.Buffer(self.ctx, mf.READ_WRITE, self.cells.nbytes)
+        self.cells_buffer = cl.Buffer(self.context, cl.mem_flags.READ_WRITE, self.cells.nbytes)
+        self.cells_buffer_out = cl.Buffer(self.context, cl.mem_flags.READ_WRITE, self.cells.nbytes)
         cl.enqueue_copy(self.queue, self.cells_buffer, self.cells).wait()
 
-        self.prg = cl.Program(self.ctx, self.kernel)
+        self.programm = cl.Program(self.context, self.kernel)
 
         try:
-            self.prg.build()
+            self.programm.build()
         except Exception:
             print("Error:")
-            print(self.prg.get_build_info(self.ctx.devices[0], cl.program_build_info.LOG))
+            print(self.programm.get_build_info(self.context.devices[0], cl.program_build_info.LOG))
             raise
     
     def calculate_next_generation(self):
-        self.prg.cgol(
+        self.programm.cgol(
             self.queue, 
             (self.size,self.size), 
             None, 
@@ -95,9 +94,12 @@ class CGOL():
 
 
 if __name__ == '__main__':
-    cgol = CGOL(40)
+    cgol = CGOL(size=40)
 
     while(True):
         cgol.calculate_next_generation()
         cgol.print_current_generation()
-        input("Press Enter to continue...")
+        try:
+            input("Press Enter to continue...")
+        except EOFError:
+            break
