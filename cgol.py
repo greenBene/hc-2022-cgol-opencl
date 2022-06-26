@@ -84,18 +84,19 @@ class CGOL():
 
 
 if __name__ == '__main__':
-    cgol = CGOL(5)
+    cgol = CGOL(40)
 
-
-    for i in range(20):
+    i = 0
+    while(True):
         cgol.calculate_next_generation()
         cells = cgol.get_cells()
 
+        i = i + 1
         print(f"{i}-th Generation")
         s = ""
         for row in cells:
             for element in row:
-                s+= "X" if element == 1 else "O"
+                s+= f"\033[93mX \033[0m" if element == 1 else "\033[92mX \033[0m"
             s+='\n'
         print(s)
-        time.sleep(1)
+        input("Press Enter to continue...")
