@@ -1,9 +1,6 @@
-# Import required libraries 
 import pyopencl as cl
 import numpy as np
-# from matplotlib import pyplot as plt
 import time
-# CELLS
 
 
 class CGOL():
@@ -46,7 +43,6 @@ class CGOL():
         }
         """
 
-
     def __init__(self, size):
         self.cells = np.random.randint(low=2, size=(size,size), dtype=np.int32)
         self.size = size
@@ -69,12 +65,12 @@ class CGOL():
     
     def calculate_next_generation(self):
         self.programm.cgol(
-            self.queue, 
-            (self.size,self.size), 
-            None, 
-            self.cells_buffer, 
-            self.cells_buffer_out, 
-            np.int32(self.size))
+            self.queue, #queue
+            (self.size,self.size), #global_size
+            None, #local_size
+            self.cells_buffer, # Argument 0 (cells_in)
+            self.cells_buffer_out, # Argument 1 (cells_out)
+            np.int32(self.size)) # Argument 2 (size)
         self.cells_buffer_out, self.cells_buffer = self.cells_buffer, self.cells_buffer_out
 
     def get_cells(self):
@@ -89,8 +85,6 @@ class CGOL():
                 s+= f"\033[93mX \033[0m" if element == 1 else "\033[92mX \033[0m"
             s+='\n'
         print(s)
-
-
 
 
 if __name__ == '__main__':
