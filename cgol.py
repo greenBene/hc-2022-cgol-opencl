@@ -5,7 +5,7 @@ import numpy as np
 
 class CGOL():
     kernel = r"""
-        int checkField(__global int *cells, int x, int y, int size){
+        int checkField(__global signed char *cells, int x, int y, int size){
             x = (x + size) % size;
             y = (y + size) % size;
 
@@ -13,7 +13,7 @@ class CGOL():
             else                    return 0;
         }
 
-        __kernel void cgol(__global int *cells_in, __global int *cells_out, int size){
+        __kernel void cgol(__global signed char *cells_in, __global signed char *cells_out, int size){
             int x = get_global_id(0);
             int y = get_global_id(1);
             
@@ -35,12 +35,12 @@ class CGOL():
             else if(isAlive > 0 && neighbours > 3) isAlive = 0;
             //Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
             else if(isAlive == 0 && neighbours == 3)isAlive = 1;
-            cells_out[x*size+y] = (int) isAlive;
+            cells_out[x*size+y] = (signed char) isAlive;
         }
         """
 
     def __init__(self, size):
-        self.cells = np.random.randint(low=2, size=(size,size), dtype=np.int32)
+        self.cells = np.random.randint(low=2, size=(size,size), dtype=np.byte)
         self.size = size
         # Prep OpelCL
         self.context = cl.create_some_context()
