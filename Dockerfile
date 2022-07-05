@@ -31,4 +31,4 @@ ENV PYOPENCL_CTX='0'
 
 ## Set default startign params
 WORKDIR /app
-CMD ["python3", "./cgol.py"]
+ENTRYPOINT ["python3", "./cgol.py"]

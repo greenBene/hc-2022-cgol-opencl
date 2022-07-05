@@ -1,6 +1,6 @@
+import sys
 import pyopencl as cl
 import numpy as np
-import time
 
 
 class CGOL():
@@ -82,14 +82,27 @@ class CGOL():
             s+='\n'
         print(s)
 
+    def save_current_generation(self, path):
+        cells = self.get_cells()
+        s=""
+        for row in cells:
+            for element in row:
+                s+= f"X " if element == 1 else "- "
+            s+='\n'
+        with open(path, "w") as f:
+            f.write(s)
+
 
 if __name__ == '__main__':
-    cgol = CGOL(size=10)
+    SIZE = int(sys.argv[1])
+    GENERATIONS = int(sys.argv[2])
 
-    while(True):
+    print(f'Start CGOL OPENCL')
+    print(f"Generations: {GENERATIONS}")
+    print(f"Size: {SIZE}")
+
+    cgol = CGOL(size=SIZE)
+
+    for i in range(GENERATIONS):
         cgol.calculate_next_generation()
-        cgol.print_current_generation()
-        try:
-            input("Press Enter to continue...")
-        except EOFError:
-            break
+    cgol.get_cells() # Ensure cells are copied back into cogl.cells
